@@ -1,97 +1,69 @@
-// src/components/Signup.tsx
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Importar useNavigate
-import axios from 'axios';
-import { Typography, Paper } from '@mui/material';
-import { Link } from 'react-router-dom';
-import { SignupContainer, StyledButton, StyledTextField } from './SignupStyles';
+import { useNavigate } from 'react-router-dom';
+import { SignupContainer, StyledButton, StyledTextField, Title, TitleH4, TitleH6 } from './SignupStyles';
+import { createUser } from './userService';
 
 
 const Signup: React.FC = () => {
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const navigate = useNavigate(); // Usar useNavigate
+  const [fullName, setFullName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const navigate = useNavigate();
 
   const handleSignup = async () => {
     if (password !== confirmPassword) {
-      // Trate o erro de senhas não coincidentes
       console.error('Passwords do not match');
       return;
     }
     try {
-      const response = await axios.post('YOUR_API_ENDPOINT/signup', {
-        fullName,
-        email,
-        password,
-      });
-      if (response.status === 201) {
-        navigate('/login'); // Redirecionar para a tela de login
+      const response = await createUser(fullName, email, password);
+      if (response) {
+        navigate('/login');
       } else {
-        // Trate outros casos de resposta da API
         console.error('Failed to sign up');
       }
     } catch (error) {
       console.error('Signup failed', error);
-      // Trate os erros conforme necessário
     }
   };
 
-  const handleFullNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFullName(e.target.value);
-  };
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
-
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
-
-  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setConfirmPassword(e.target.value);
-  };
-
   return (
-    <SignupContainer component={Paper}>
-      <Typography variant="h4" gutterBottom>
-        Cadastro
-      </Typography>
+    <SignupContainer>
+      <Title>
+        <TitleH4>Arnia Trello</TitleH4>
+        <TitleH6>Cadastro</TitleH6>
+      </Title>
       <form noValidate autoComplete="off">
         <StyledTextField
           label="Nome Completo"
           variant="outlined"
           value={fullName}
-          onChange={handleFullNameChange}
+          onChange={(e) => setFullName(e.target.value)}
         />
         <StyledTextField
           label="Email"
           variant="outlined"
           value={email}
-          onChange={handleEmailChange}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <StyledTextField
           label="Senha"
           type="password"
           variant="outlined"
           value={password}
-          onChange={handlePasswordChange}
+          onChange={(e) => setPassword(e.target.value)}
         />
         <StyledTextField
           label="Repita a Senha"
           type="password"
           variant="outlined"
           value={confirmPassword}
-          onChange={handleConfirmPasswordChange}
+          onChange={(e) => setConfirmPassword(e.target.value)}
         />
         <StyledButton variant="contained" onClick={handleSignup}>
-          Cadastro
+          CADASTRAR
         </StyledButton>
-        <Typography>
-          Already have an account? <Link to="/login">Log in</Link>
-        </Typography>
       </form>
     </SignupContainer>
   );

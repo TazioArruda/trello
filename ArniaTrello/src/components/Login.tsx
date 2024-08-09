@@ -1,68 +1,55 @@
-// src/components/Login.tsx
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Importar useNavigate
-import axios from 'axios';
-import { Typography, Paper } from '@mui/material';
-import { Link } from 'react-router-dom';
-import { LoginContainer, StyledButton, StyledTextField } from './LoginStyles';
+import { useNavigate } from 'react-router-dom';
+import { Typography } from '@mui/material';
+import { ButtonWrapper, LoginContainer, StyledButton, StyledTextField, Title } from './LoginStyles';
+import { loginUser } from './userService';
 
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const navigate = useNavigate(); // Usar useNavigate
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('YOUR_API_ENDPOINT/login', {
-        email,
-        password,
-      });
-      if (response.data.token) {
-        localStorage.setItem('authToken', response.data.token); // Salvar token no localStorage
-        navigate('/'); // Redirecionar para a tela do Kanban
+      const response = await loginUser(email, password);
+      if (response.token) {
+        localStorage.setItem('authToken', response.token);
+        navigate('/');
       } else {
-        // Trate o caso onde o token não está presente
         console.error('No token received');
       }
     } catch (error) {
       console.error('Login failed', error);
-      // Trate os erros conforme necessário
     }
   };
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
-
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
-
   return (
-    <LoginContainer component={Paper}>
-      <Typography variant="h4" gutterBottom>
-        Login
-      </Typography>
+    <LoginContainer>
+      <Title variant="h4" gutterBottom>
+        Arnia Trello
+      </Title>
       <form noValidate autoComplete="off">
         <StyledTextField
           label="Email"
           variant="outlined"
           value={email}
-          onChange={handleEmailChange}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <StyledTextField
           label="Password"
           type="password"
           variant="outlined"
           value={password}
-          onChange={handlePasswordChange}
+          onChange={(e) => setPassword(e.target.value)}
         />
-        <StyledButton variant="contained" onClick={handleLogin}>
-          Login
-        </StyledButton>
-        <Typography>
-          Don't have an account? <Link to="/signup">Sign up</Link>
+        <ButtonWrapper>
+          <StyledButton variant="contained" onClick={handleLogin}>
+            Entrar
+          </StyledButton>
+        </ButtonWrapper>
+        <Typography variant="body2" color="#FFFFFF" align="center" style={{ marginTop: '20px', cursor: 'pointer' }} onClick={() => navigate('/signup')}>
+          Cadastre-se
         </Typography>
       </form>
     </LoginContainer>

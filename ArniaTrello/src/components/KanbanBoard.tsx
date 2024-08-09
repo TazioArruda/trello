@@ -1,13 +1,13 @@
 import React from 'react';
 import { Container, Typography, Button } from '@mui/material';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; // useNavigate ao invés de useHistory
 
 const KanbanBoard: React.FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate(); // useNavigate ao invés de useHistory
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
-    history.push('/login');
+    navigate('/login'); // navegação com useNavigate
   };
 
   return (
